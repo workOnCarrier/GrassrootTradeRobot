@@ -1,0 +1,6 @@
+[submodule "Infrastructure/uWebsockets"]
+	path = Infrastructure/uWebsockets
+	url = https://github.com/zaphoyd/websocketpp.git
+[submodule "Infrastructure/nlohmann_json"]
+	path = Infrastructure/nlohmann_json
+	url = https://github.com/nlohmann/json.git
