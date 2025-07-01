@@ -1,0 +1,67 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+{
+	"name": "TradeRobot",
+	"build" : {
+		"dockerfile": "../Dockerfile",
+        "args": {
+            "USERNAME": "dev",
+            "USER_ID": "1000",
+            "USER_GID": "1000"
+        }
+	},
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	// "features": {},
+	// Configure tool-specific properties.
+	"customizations": {
+		// Configure properties specific to VS Code.
+		"vscode": {
+			"settings": {
+                "terminal.integrated.defaultProfile.linux": "bash",
+                "terminal.integrated.profiles.linux": {
+                    "bash": {
+                        "path": "bash",
+                        "icon": "terminal-bash"
+                    },
+                   "tmux": {
+                        "path": "tmux",
+                        "icon": "terminal-tmux"
+                    },
+                    "pwsh": {
+                        "path": "pwsh",
+                        "icon": "terminal-powershell"
+                    }
+                }
+            },
+			"extensions": [
+				"streetsidesoftware.code-spell-checker",
+                "ms-vscode.cpptools",
+                "ms-vscode.cmake-tools",
+                "ms-vscode.remote-explorer",
+                "ms-vscode.remote-repositories",
+                "ms-vscode.remote-server",
+                "ms-vscode.remote-ssh",
+                "ms-vscode.remote-ssh-edit",
+                "ms-vscode.remote-wsl",
+                "ms-vscode.vs-code-remote-containers"
+			]
+		}
+	},
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [9000],
+	// Use 'portsAttributes' to set default properties for specific forwarded ports. 
+	// More info: https://containers.dev/implementors/json_reference/#port-attributes
+	"portsAttributes": {
+		"9000": {
+			"label": "Hello Remote World",
+			"onAutoForward": "notify"
+		}
+	},
+
+	// Use 'postCreateCommand' to run commands after the container is created.
+	// "postCreateCommand": "pip3 install -r requirements.txt"
+
+	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+	"remoteUser": "dev",
+    "mounts": ["source=${localWorkspaceFolder},target=/home/dev/app,type=bind,consistency=cached"],
+    "runArgs": ["--privileged"]
+}
