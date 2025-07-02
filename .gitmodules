@@ -1,3 +1,6 @@
 [submodule "Infrastructure/nlohmann_json"]
 	path = Infrastructure/nlohmann_json
 	url = https://github.com/nlohmann/json.git
+[submodule "Infrastructure/websocketcpp"]
+	path = Infrastructure/websocketcpp
+	url = https://github.com/zaphoyd/websocketpp.git
