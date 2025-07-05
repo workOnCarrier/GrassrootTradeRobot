@@ -11,7 +11,16 @@ cmake_minimum_required(VERSION 3.22)
 #  Tell CMake where to find the compiler by setting the CMake cache entry
 #  CMAKE_Python_COMPILER to the full path to the compiler, or to the compiler
 #  name if it is in the PATH.
-project(BuildSetupCheck VERSION 1.0 LANGUAGES CXX)
-set(CMAKE_CXX_STANDARD 23) 
+project(GeminiMDFeedTest VERSION 1.0 LANGUAGES CXX)
+# set(CMAKE_CXX_STANDARD 23)  -- does not work with websocketcpp
 
-add_executable(hw hw.cpp)
+
+find_package(Boost REQUIRED system)
+
+add_executable(GeminiMDFeedTest sample_subscribe.cpp)
+target_include_directories(GeminiMDFeedTest  PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../../../Infrastructure/nlohmann_json/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../../../Infrastructure/websocketcpp
+)
+get_target_property(GeminiMDFeedTest_INCLUDE_DIRS GeminiMDFeedTest INCLUDE_DIRECTORIES)
+message(STATUS "GeminiMDFeedTest include dirs: ${GeminiMDFeedTest_INCLUDE_DIRS}")
