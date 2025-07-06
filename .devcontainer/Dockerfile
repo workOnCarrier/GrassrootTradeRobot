@@ -18,3 +18,5 @@ RUN useradd -m -s /bin/bash -u $UID $USER && echo "$USER ALL=(ALL) NOPASSWD:ALL"
 ARG USER=dev
 
 USER ${USER}
+
+COPY .tmux.conf /home/${USER}
