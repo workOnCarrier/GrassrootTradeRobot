@@ -9,6 +9,15 @@ RUN apt-get update && apt-get install -y \
   libssl-dev \
   && apt-get clean
 
+RUN apt-get update && apt-get install -y \
+  curl \
+  gnupg \
+  ca-certificates \
+  && curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+  && apt-get install -y nodejs \
+  && npm install -g wscat \
+  && apt-get clean
+
 ARG USER=dev
 ARG UID=1000
 
