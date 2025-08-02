@@ -1,3 +1,6 @@
 [submodule "Infrastructure/nlohmann_json"]
 	path = Infrastructure/nlohmann_json
 	url = https://github.com/nlohmann/json.git
+[submodule "Infrastructure/curl"]
+	path = Infrastructure/curl
+	url = https://github.com/curl/curl.git

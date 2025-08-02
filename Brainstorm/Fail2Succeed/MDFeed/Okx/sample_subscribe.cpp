@@ -15,41 +15,52 @@ using json = nlohmann::json;
 namespace beast = boost::beast;
 namespace websocket = beast::websocket;
 namespace net = boost::asio;
+namespace ssl = net::ssl;
 using tcp = net::ip::tcp;
 
 int main() {
-    try {
-        std::string host = "api.gemini.com";
-        std::string port = "443";
-        std::string target = "/v1/marketdata/btcusd"; // Example endpoint
+    const std::string host = "ws.okx.com";
+    const std::string port = "8443";
+    const std::string target = "/ws/v5/public";
+    net::io_context ioc;
+    ssl::context ctx{ssl::context::tlsv12_client};
+    ctx.set_default_verify_paths();
 
-        net::io_context ioc;
-        tcp::resolver resolver(ioc);
-        net::ssl::context ctx(net::ssl::context::tlsv12_client); // 1. Persistent context
-        beast::ssl_stream<tcp::socket> stream(ioc, ctx); // 2. Pass context by reference
-
-        auto const results = resolver.resolve(host, port);
-
-        // Connect the TCP socket
-        net::connect(beast::get_lowest_layer(stream), results);
-
-        // Perform SSL handshake
-        stream.handshake(net::ssl::stream_base::client);
-
-        websocket::stream<beast::ssl_stream<tcp::socket>> ws(std::move(stream));
-        ws.handshake(host, target);
-
-        // Send a subscribe message if required by the API
-        // ws.write(net::buffer(R"({"type":"subscribe","channels":["ticker"]})"));
-
-        for (;;) {
-            beast::flat_buffer buffer;
-            ws.read(buffer);
-            std::cout << beast::make_printable(buffer.data()) << std::endl;
-        }
-    } catch (std::exception const& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
-        return EXIT_FAILURE;
+    // Resolve and connect
+    tcp::resolver resolver{ioc};
+    auto results = resolver.resolve(host, port);
+    beast::ssl_stream<beast::tcp_stream> stream{ioc, ctx};
+    beast::get_lowest_layer(stream).connect(results);
+    // [Add SNI fix here]
+    if(!SSL_set_tlsext_host_name(stream.native_handle(), host.c_str())) {
+        throw beast::system_error(
+            beast::error_code(
+                static_cast<int>(::ERR_get_error()),
+                net::error::get_ssl_category()),
+            "Failed to set SNI Hostname");
     }
-    return EXIT_SUCCESS;
+    stream.handshake(ssl::stream_base::client);
+
+    // WebSocket handshake
+    websocket::stream<beast::ssl_stream<beast::tcp_stream>> ws{std::move(stream)};
+    ws.handshake(host, target);
+
+    // OKX subscribe message for BTC-USDT ticker
+    nlohmann::json subscribe_msg = {
+        {"op", "subscribe"},
+        {"args", {{
+            {"channel", "tickers"},
+            {"instId", "BTC-USDT"}
+        }}}
+    };
+    ws.write(net::buffer(subscribe_msg.dump()));
+
+    // Main receive loop
+    for (;;) {
+        beast::flat_buffer buffer;
+        ws.read(buffer);
+        std::cout << "OKX:" << beast::make_printable(buffer.data()) << std::endl;
+    }
 }
+
+
