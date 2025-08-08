@@ -66,6 +66,8 @@ OrderBookSnapshot fetch_snapshot(const std::string& symbol, boost::asio::io_cont
     for (const auto& x : snapshot["bids"]) ob.bids[std::stod(x["price"].get<std::string>())] = std::stod(x["amount"].get<std::string>());
     for (const auto& x : snapshot["asks"]) ob.asks[std::stod(x["price"].get<std::string>())] = std::stod(x["amount"].get<std::string>());
 
+    // std::cout << "\t --" << ob << std::endl;
+
     return ob;
 }
 
@@ -101,9 +103,11 @@ void subscribe_and_update(const std::string& symbol,
         for (const auto& ev : events) {
             // Update bids
             if (ev.contains("delta")) {
-                std::cout << "found delta:" <<  ev << std::endl;
+                std::cout << "\t found delta:" <<  ev << std::endl;
                 for (const auto& change : ev["delta"]) {
+                    std::cout << "\t found change:" <<  change << std::endl;
                     std::string side = change[0];
+                    std::cout << "\t found side:" <<  side << std::endl;
                     double price = std::stod(change[1].get<std::string>());
                     double qty = std::stod(change[2].get<std::string>());
                     if (side == "buy") {

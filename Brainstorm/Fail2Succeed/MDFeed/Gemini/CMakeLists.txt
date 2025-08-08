@@ -79,4 +79,15 @@ target_link_libraries(GeminiMarketData PRIVATE
 get_target_property(GeminiMarketData_INCLUDE_DIRS GeminiMDFeedTest INCLUDE_DIRECTORIES)
 message(STATUS "GeminiMarketData include dirs: ${GeminiMDFeedTest_INCLUDE_DIRS}")
 
+# tradable
+add_executable(GeminiTradeableMd tradable_md.cpp)
+target_include_directories(GeminiTradeableMd     PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../../../Infrastructure/nlohmann_json/include
+    Boost::system pthread
+)
+target_link_libraries(GeminiTradeableMd PRIVATE
+    Boost::system pthread ssl crypto
+)
+get_target_property(GeminiMarketData_INCLUDE_DIRS GeminiMDFeedTest INCLUDE_DIRECTORIES)
+message(STATUS "GeminiTradeableMd include dirs: ${GeminiMDFeedTest_INCLUDE_DIRS}")
 
